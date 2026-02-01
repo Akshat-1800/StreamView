@@ -32,8 +32,8 @@ export default function Navbar() {
       {/* Avatar + Dropdown */}
       <div
         className="relative"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        onClick={() => setOpen(!open)}
+          
       >
         {user.imageUrl ? (
           <img

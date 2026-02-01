@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server";
 import dbconnect from "@/lib/db";
 import { Video } from "@/models/Video";
-import { auth } from "@clerk/nextjs/server";
+import { auth,currentUser } from "@clerk/nextjs/server";
 import { User } from "@/models/User";
 
 export async function GET(req, { params }) {
   await dbconnect();
 
-  const { userId } = auth();
+  // const { userId } = auth(req);
+  const user = await currentUser();
+  const userId = user?.id;
+  console.log("User ID:", userId);
 
   // 1️⃣ Must be logged in
   if (!userId) {

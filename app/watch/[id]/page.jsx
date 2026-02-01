@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import VideoPlayer from "@/components/VideoPlayer";
-import { getSocket } from "@/lib/socketClient";
+// import { getSocket } from "@/lib/socketClient";
 
 export default function WatchPage() {
   const { id } = useParams();
@@ -13,7 +13,7 @@ export default function WatchPage() {
   const [error, setError] = useState(null);
   const [quality, setQuality] = useState("auto");
 
-  const socket = getSocket(); // ✅ global socket
+  // const socket = getSocket(); // ✅ global socket
 
   /* ======================
      FETCH VIDEO
@@ -34,27 +34,27 @@ export default function WatchPage() {
   /* ======================
      ROOM CREATED LISTENER
      ====================== */
-  useEffect(() => {
-    socket.on("room-created", ({ roomId }) => {
-      router.push(`/party/${roomId}`);
-    });
+  // useEffect(() => {
+  //   socket.on("room-created", ({ roomId }) => {
+  //     router.push(`/party/${roomId}`);
+  //   });
 
-    return () => {
-      socket.off("room-created");
-    };
-  }, [router, socket]);
+  //   return () => {
+  //     socket.off("room-created");
+  //   };
+  // }, [router, socket]);
 
-  /* ======================
-     CREATE PARTY
-     ====================== */
-  const createParty = () => {
-    if (!video) return;
-    socket.emit("create-room", { videoId: video._id });
-  };
+  // /* ======================
+  //    CREATE PARTY
+  //    ====================== */
+  // const createParty = () => {
+  //   if (!video) return;
+  //   socket.emit("create-room", { videoId: video._id });
+  // };
 
-  /* ======================
-     ERROR UI
-     ====================== */
+  // /* ======================
+  //    ERROR UI
+  //    ====================== */
   if (error) {
     return (
       <div className="p-10 text-center">

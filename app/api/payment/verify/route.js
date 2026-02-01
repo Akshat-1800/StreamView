@@ -1,15 +1,16 @@
 import crypto from "crypto";
-import { auth } from "@clerk/nextjs/server";
+import { auth,currentUser } from "@clerk/nextjs/server";
 import dbconnect from "@/lib/db";
 import { User } from "@/models/User";
 import { Subscription } from "@/models/Subscription";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 
-dotenv.config({path:".env.local"});
+// dotenv.config({path:".env.local"});
 
 export async function POST(req) {
   try {
-    const { userId } = auth();
+    const user = await currentUser();
+    const userId = user?.id;
     if (!userId) {
       return new Response("Unauthorized", { status: 401 });
     }

@@ -20,7 +20,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+    // afterSignInUrl="/dashboard"
+    // afterSignUpUrl="/dashboard"
+    // signInForceRedirectUrl="/dashboard"
+    // signUpForceRedirectUrl="/dashboard"
+    >
     <html lang="en">
       
       <body

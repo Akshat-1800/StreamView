@@ -2,9 +2,7 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import dbconnect from "@/lib/db";
 import { User } from "@/models/User";
-import dotenv from "dotenv";
 
-dotenv.config({path:".env.local"});
 
 export async function POST(req) {
   const payload = await req.json();

@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import VideoCard from './VideoCard'
 import { useState,useEffect } from 'react'

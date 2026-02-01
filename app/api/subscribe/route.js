@@ -10,6 +10,13 @@ export async function POST() {
         if(!userId){
             return new Response(JSON.stringify({error: "Unauthorized"}), {status: 401});
         }
+        const user =  await User.findOne({clerkUserId: userId});
+        if(!user){
+            return new Response(JSON.stringify({error: "User not found"}), {status: 404});
+        }
+        if(user.plan === "PREMIUM"){
+            return new Response(JSON.stringify({message: "User already has PREMIUM plan"}), {status: 200});
+        }
         const startDate = new Date();
         const endDate = new Date();
         endDate.setMinutes(endDate.getMinutes() + 1);

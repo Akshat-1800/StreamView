@@ -6,6 +6,7 @@ import LocalVideoTile from "@/components/localVideoTile";
 import RemoteVideoTile from "@/components/remoteVideoTile";
 import { getSocket } from "@/lib/socketClient";
 import { createPeerConnection } from "@/lib/webRTC";
+import {useRouter} from "next/navigation"
 
 export default function PartyPage() {
   const { roomId } = useParams();
@@ -62,17 +63,46 @@ export default function PartyPage() {
   /* ======================
      MEDIA
      ====================== */
-  useEffect(() => {
-    async function init() {
+ useEffect(() => {
+  let active = true;
+
+  async function init() {
+    try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       });
+
+      if (!active) return;
+
       setLocalStream(stream);
       cameraTrackRef.current = stream.getVideoTracks()[0];
+    } catch (err) {
+      if (!active) return;
+
+      if (err && err.name === "NotAllowedError") {
+        alert("Permissions denied. Please allow camera and microphone access.");
+      } else if (err && err.name === "NotFoundError") {
+        alert("No camera or microphone found.");
+      } else {
+        alert("Failed to access camera/microphone.");
+      }
+
+      setLocalStream(null);
     }
-    init();
-  }, []);
+  }
+
+  init();
+
+  // ✅ cleanup
+  return () => {
+    active = false;
+    if (cameraTrackRef.current) {
+      cameraTrackRef.current.stop();
+    }
+  };
+}, []);
+
 
   /* ======================
      CREATE OFFERS
@@ -141,7 +171,8 @@ export default function PartyPage() {
   /* ======================
      SCREEN SHARE
      ====================== */
-  const startScreenShare = async () => {
+const startScreenShare = async () => {
+  try {
     socket.emit("start-screen-share");
 
     const screenStream = await navigator.mediaDevices.getDisplayMedia({
@@ -151,41 +182,63 @@ export default function PartyPage() {
     const screenTrack = screenStream.getVideoTracks()[0];
     screenStreamRef.current = screenStream;
 
-    Object.values(peersRef.current).forEach((pc) =>
-      pc.getSenders()
-        .find((s) => s.track?.kind === "video")
-        ?.replaceTrack(screenTrack)
-    );
+    // Save camera track once
+    if (!cameraTrackRef.current) {
+      cameraTrackRef.current =
+        localStream?.getVideoTracks()?.[0] ?? null;
+    }
+
+    Object.values(peersRef.current).forEach((pc) => {
+      const sender = pc
+        .getSenders()
+        .find((s) => s.track?.kind === "video");
+
+      sender?.replaceTrack(screenTrack);
+    });
 
     setLocalStream(
       new MediaStream([
         screenTrack,
-        ...localStream.getAudioTracks(),
+        ...(localStream?.getAudioTracks() ?? []),
       ])
     );
 
     screenTrack.onended = stopScreenShare;
-  };
+  } catch (err) {
+    if (err.name === "NotAllowedError") {
+      console.log("Screen sharing cancelled by user");
+    } else {
+      console.error("Screen share failed", err);
+    }
+  }
+};
 
-  const stopScreenShare = () => {
-    socket.emit("stop-screen-share");
 
-    Object.values(peersRef.current).forEach((pc) =>
-      pc.getSenders()
-        .find((s) => s.track?.kind === "video")
-        ?.replaceTrack(cameraTrackRef.current)
-    );
+ const stopScreenShare = () => {
+  socket.emit("stop-screen-share");
 
-    setLocalStream(
-      new MediaStream([
-        cameraTrackRef.current,
-        ...localStream.getAudioTracks(),
-      ])
-    );
+  const cameraTrack = cameraTrackRef.current;
+  if (!cameraTrack) return;
 
-    screenStreamRef.current?.getTracks().forEach((t) => t.stop());
-    screenStreamRef.current = null;
-  };
+  Object.values(peersRef.current).forEach((pc) => {
+    const sender = pc
+      .getSenders()
+      .find((s) => s.track?.kind === "video");
+
+    sender?.replaceTrack(cameraTrack);
+  });
+
+  setLocalStream(
+    new MediaStream([
+      cameraTrack,
+      ...(localStream?.getAudioTracks() ?? []),
+    ])
+  );
+
+  screenStreamRef.current?.getTracks().forEach((t) => t.stop());
+  screenStreamRef.current = null;
+};
+
 
   const leaveRoom = () => {
   // 1️⃣ Close all peer connections
@@ -203,7 +256,9 @@ export default function PartyPage() {
   socket.disconnect();
 
   // 5️⃣ Redirect user
-  window.location.href = "/party"; // or /dashboard
+  // window.location.href = "/party"; // or /dashboard
+  const router=useRouter();
+  router.replace("/dashboard");
 };
 
 
@@ -250,7 +305,7 @@ export default function PartyPage() {
       )}
 
       {/* 👥 PARTICIPANTS (ALWAYS VISIBLE) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 flex-grow">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 grow">
         {/* Local tile always visible */}
         <LocalVideoTile stream={localStream} />
 
