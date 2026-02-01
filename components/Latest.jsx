@@ -3,53 +3,49 @@ import React from 'react'
 import VideoCard from './VideoCard'
 import { useState,useEffect } from 'react'
 
-
-// const videos = [
-//   {
-//     _id: '1',
-//     title: 'Inception',
-//     thumbnailUrl: '/public/next.svg',
-//     isPremium: true,
-//   },
-//   {
-//     _id: '2',
-//     title: 'The Matrix',
-//     thumbnailUrl: '/public/next.svg',
-//     isPremium: false,
-//   },
-//   {
-//     _id: '3',
-//     title: 'Interstellar',
-//     thumbnailUrl: '/public/next.svg',
-//     isPremium: true,
-//   },
-//   {
-//     _id: '4',
-//     title: 'The Dark Knight',
-//     thumbnailUrl: '/public/next.svg',
-//     isPremium: false,
-//   },
-// ]
-
 const Latest = () => {
   const [videos, setVideos] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch("/api/videos")
       .then((res) => res.json())
-      .then((data) => setVideos(data));
+      .then((data) => {
+        setVideos(data)
+        setLoading(false)
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   return (
-    <section className="py-20 px-6">
-      <h2 className="text-3xl font-bold mb-8 text-center">
-        Latest Releases
-      </h2>
+    <section className="py-24 px-6 bg-black/50">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <h2 className="section-title text-3xl mb-2">Latest Releases</h2>
+            <p className="text-gray-400">Fresh content added weekly</p>
+          </div>
+          <a href="/dashboard" className="btn btn-secondary text-sm">
+            View All →
+          </a>
+        </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-        {videos.map((video) => (
-          <VideoCard key={video._id} video={video} />
-        ))}
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="space-y-3">
+                <div className="skeleton aspect-video"></div>
+                <div className="skeleton h-4 w-3/4"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {videos.slice(0, 8).map((video) => (
+              <VideoCard key={video._id} video={video} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

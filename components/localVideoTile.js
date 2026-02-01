@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-export default function LocalVideoTile({ stream }) {
+export default function LocalVideoTile({ stream, pinned = false, isPresenting = false }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -11,7 +11,7 @@ export default function LocalVideoTile({ stream }) {
   }, [stream]);
 
   return (
-    <div className="relative w-48 h-36 bg-black rounded overflow-hidden">
+    <div className={`video-tile ${pinned ? 'video-tile-pinned w-full h-full' : 'participant-tile'}`}>
       <video
         ref={videoRef}
         autoPlay
@@ -19,9 +19,16 @@ export default function LocalVideoTile({ stream }) {
         playsInline
         className="w-full h-full object-cover"
       />
-      <span className="absolute bottom-1 left-1 text-xs bg-black/60 px-2 py-0.5 rounded">
-        You
-      </span>
+      {isPresenting && (
+        <div className="video-tile-presenter">
+          <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+          Presenting
+        </div>
+      )}
+      <div className="video-tile-label">
+        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+        You {isPresenting && "(Sharing)"}
+      </div>
     </div>
   );
 }

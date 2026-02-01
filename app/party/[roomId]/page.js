@@ -256,9 +256,9 @@ const startScreenShare = async () => {
   socket.disconnect();
 
   // 5️⃣ Redirect user
-  // window.location.href = "/party"; // or /dashboard
-  const router=useRouter();
-  router.replace("/dashboard");
+   window.location.href = "/dashboard"; // or /dashboard
+  // const router=useRouter();
+  // router.replace("/dashboard");
 };
 
 
@@ -278,66 +278,152 @@ const startScreenShare = async () => {
     });
 
   if (!roomState || !localStream)
-    return <div className="p-10 text-gray-400">Loading…</div>;
+    return (
+      <div className="h-screen flex items-center justify-center gradient-mesh">
+        <div className="text-center animate-fade-in">
+          <div className="loading-spinner mx-auto mb-4"></div>
+          <p className="text-gray-400 text-lg">Joining party...</p>
+        </div>
+      </div>
+    );
 
   /* ======================
      RENDER
      ====================== */
-  return (
-    <div className="h-screen p-4 flex flex-col gap-4">
-      <h1 className="text-xl font-bold">🎉 Watch Party</h1>
-      <h1 className="text-lg">Room ID: {roomId}</h1>
+  const participantCount = Object.keys(remoteStreams).length + 1;
 
-      {/* 🎯 MAIN STAGE */}
-      {presenterId && (
-        <div className="flex justify-center">
-          <div className="w-full max-w-5xl aspect-video">
-            {isPresenter ? (
-              <LocalVideoTile stream={localStream} pinned />
-            ) : (
-              <RemoteVideoTile
-                stream={remoteStreams[presenterId]}
-                pinned
-              />
-            )}
+  return (
+    <div className="party-container">
+      {/* HEADER */}
+      <header className="party-header">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold flex items-center gap-2">
+              <span className="text-2xl">🎉</span>
+              <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                Watch Party
+              </span>
+            </h1>
+            <div className="h-6 w-px bg-gray-700"></div>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800/50 rounded-full">
+              <span className="text-sm text-gray-400">Room:</span>
+              <code className="text-sm font-mono text-white">{roomId}</code>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800/50 rounded-full">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              <span className="text-sm text-gray-300">{participantCount} {participantCount === 1 ? 'person' : 'people'}</span>
+            </div>
           </div>
         </div>
-      )}
+      </header>
 
-      {/* 👥 PARTICIPANTS (ALWAYS VISIBLE) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 grow">
-        {/* Local tile always visible */}
-        <LocalVideoTile stream={localStream} />
+      {/* MAIN CONTENT */}
+      <main className="party-main">
+        {/* MAIN STAGE - Presenter View */}
+        <div className="party-stage">
+          {presenterId ? (
+            <div className="presenter-view">
+              {isPresenter ? (
+                <LocalVideoTile stream={localStream} pinned isPresenting />
+              ) : (
+                <RemoteVideoTile
+                  stream={remoteStreams[presenterId]}
+                  pinned
+                  isPresenting
+                  label="Presenter"
+                />
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center p-8 glass rounded-2xl max-w-md">
+              <div className="text-6xl mb-4">🖥️</div>
+              <h3 className="text-xl font-semibold mb-2">No one is presenting</h3>
+              <p className="text-gray-400 mb-4">Click "Share Screen" to start presenting to everyone</p>
+            </div>
+          )}
+        </div>
 
-        {Object.entries(remoteStreams).map(
-          ([id, stream]) =>
-            id !== presenterId && (
-              <RemoteVideoTile key={id} stream={stream} />
-            )
-        )}
-      </div>
+        {/* SIDEBAR - Participants */}
+        <aside className="party-sidebar">
+          <div className="text-sm text-gray-400 font-medium mb-2 px-1">Participants</div>
+          
+          {/* Local user tile - always show unless presenting */}
+          {(!presenterId || !isPresenter) && (
+            <LocalVideoTile stream={localStream} />
+          )}
 
-      {/* 🎛 CONTROLS */}
-      <div className="flex justify-center gap-4">
-        <button onClick={toggleMic}>
-          🎤 {micOn ? "Mute" : "Unmute"}
-        </button>
-        <button onClick={toggleCam}>
-          🎥 {camOn ? "Cam Off" : "Cam On"}
-        </button>
-        <button
-          disabled={presenterId && !isPresenter}
-          onClick={startScreenShare}
-        >
-          🖥 Share Screen
-        </button>
-        {isPresenter && (
-          <button onClick={stopScreenShare}>⛔ Stop</button>
-        )}
-        <button onClick={leaveRoom}>
-          ❌ Leave Room
-        </button>
-      </div>
+          {/* Remote participants - exclude presenter */}
+          {Object.entries(remoteStreams).map(
+            ([id, stream], index) =>
+              id !== presenterId && (
+                <RemoteVideoTile 
+                  key={id} 
+                  stream={stream} 
+                  label={`Guest ${index + 1}`}
+                />
+              )
+          )}
+
+          {/* Show presenter in sidebar too if it's a remote user */}
+          {presenterId && !isPresenter && (
+            <div className="mt-2 pt-2 border-t border-gray-800">
+              <div className="text-xs text-gray-500 mb-2 px-1">Presenter (Large View)</div>
+            </div>
+          )}
+        </aside>
+      </main>
+
+      {/* CONTROLS */}
+      <footer className="party-controls">
+        <div className="control-bar">
+          <button 
+            onClick={toggleMic} 
+            className={`control-btn ${micOn ? '' : 'active'}`}
+            title={micOn ? 'Mute' : 'Unmute'}
+          >
+            {micOn ? '🎤' : '🔇'}
+          </button>
+          
+          <button 
+            onClick={toggleCam} 
+            className={`control-btn ${camOn ? '' : 'active'}`}
+            title={camOn ? 'Turn off camera' : 'Turn on camera'}
+          >
+            {camOn ? '📹' : '📷'}
+          </button>
+
+          <button
+            disabled={presenterId && !isPresenter}
+            onClick={startScreenShare}
+            className={`control-btn ${isPresenter ? 'active' : ''}`}
+            title={presenterId && !isPresenter ? 'Someone is already presenting' : 'Share screen'}
+          >
+            🖥️
+          </button>
+
+          {isPresenter && (
+            <button 
+              onClick={stopScreenShare} 
+              className="control-btn"
+              title="Stop presenting"
+            >
+              ⏹️
+            </button>
+          )}
+
+          <div className="w-px h-8 bg-gray-700 mx-2"></div>
+
+          <button 
+            onClick={leaveRoom} 
+            className="control-btn danger"
+            title="Leave party"
+          >
+            📞
+          </button>
+        </div>
+      </footer>
     </div>
   );
 }

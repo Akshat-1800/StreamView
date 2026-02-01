@@ -8,6 +8,7 @@ export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const debouncedQuery = useDebounce(query, 300);
   const router = useRouter();
@@ -28,52 +29,70 @@ export default function SearchBar() {
   }, [debouncedQuery]);
 
   return (
-    <div className="relative w-72">
-      <input
-        type="text"
-        placeholder="Search movies or series..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="w-full px-4 py-2 rounded bg-gray-800 text-white focus:outline-none"
-      />
+    <div className="relative w-80">
+      <div className={`relative transition-all duration-300 ${focused ? 'scale-105' : ''}`}>
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+          🔍
+        </span>
+        <input
+          type="text"
+          placeholder="Search movies, series..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setTimeout(() => setFocused(false), 200)}
+          className="input pl-11 pr-4 py-2.5 rounded-full bg-gray-900 border-gray-800 focus:border-red-500/50 placeholder-gray-500"
+        />
+      </div>
 
       {/* Dropdown */}
-      {query && (
-        <div className="absolute top-11 w-full bg-gray-900 rounded shadow-lg z-50">
+      {query && focused && (
+        <div className="absolute top-14 w-full glass rounded-xl shadow-2xl overflow-hidden animate-fade-in">
           {loading && (
-            <p className="p-3 text-sm text-gray-400">Searching...</p>
+            <div className="flex items-center gap-3 p-4">
+              <div className="loading-spinner w-5 h-5"></div>
+              <span className="text-sm text-gray-400">Searching...</span>
+            </div>
           )}
 
           {!loading && results.length === 0 && (
-            <p className="p-3 text-sm text-gray-400">No results</p>
+            <div className="p-4 text-center">
+              <span className="text-2xl block mb-2">🔍</span>
+              <p className="text-sm text-gray-400">No results found</p>
+            </div>
           )}
 
-          {!loading &&
-            results.map((video) => (
-              <div
-                key={video._id}
-                onClick={() => {
-                  router.push(`/watch/${video._id}`);
-                  setQuery("");
-                  setResults([]);
-                }}
-                className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-800"
-              >
-                <img
-                  src={video.thumbnailUrl}
-                  alt={video.title}
-                  className="w-12 h-16 object-cover rounded"
-                />
-                <div>
-                  <p className="text-sm font-medium">{video.title}</p>
-                  {video.isPremium && (
-                    <span className="text-xs text-purple-400">
-                      Premium
-                    </span>
-                  )}
+          {!loading && results.length > 0 && (
+            <div className="max-h-80 overflow-y-auto">
+              {results.map((video) => (
+                <div
+                  key={video._id}
+                  onClick={() => {
+                    router.push(`/watch/${video._id}`);
+                    setQuery("");
+                    setResults([]);
+                  }}
+                  className="flex items-center gap-4 p-3 cursor-pointer hover:bg-white/5 transition-colors"
+                >
+                  <img
+                    src={video.thumbnailUrl}
+                    alt={video.title}
+                    className="w-16 h-10 object-cover rounded-lg"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{video.title}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      {video.isPremium && (
+                        <span className="text-xs text-red-400 flex items-center gap-1">
+                          ⭐ Premium
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

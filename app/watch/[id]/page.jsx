@@ -57,43 +57,85 @@ export default function WatchPage() {
   //    ====================== */
   if (error) {
     return (
-      <div className="p-10 text-center">
-        <p className="text-red-500">{error}</p>
+      <div className="min-h-screen flex items-center justify-center gradient-mesh p-6">
+        <div className="card p-8 max-w-md text-center animate-fade-in">
+          <span className="text-5xl block mb-4">😕</span>
+          <h2 className="text-xl font-semibold mb-2">Oops!</h2>
+          <p className="text-red-400 mb-6">{error}</p>
+          <button 
+            onClick={() => router.push('/dashboard')}
+            className="btn btn-primary"
+          >
+            Back to Dashboard
+          </button>
+        </div>
       </div>
     );
   }
 
   if (!video) {
-    return <div className="p-10">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center gradient-mesh">
+        <div className="text-center animate-fade-in">
+          <div className="loading-spinner mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading video...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold">{video.title}</h1>
-        <p className="text-gray-400">{video.description}</p>
-      </div>
+    <div className="min-h-screen gradient-mesh">
+      <div className="max-w-6xl mx-auto p-6 space-y-6">
+        {/* Back button */}
+        <button 
+          onClick={() => router.back()}
+          className="btn btn-ghost text-sm px-0 hover:bg-transparent hover:text-red-400"
+        >
+          ← Back
+        </button>
 
-      <VideoPlayer src={video.videoUrl} quality={quality} />
-
-      <div className="flex items-center justify-between gap-4">
-        {/* 🎚 Quality */}
-        <div className="flex gap-2">
-          {["auto", 240, 480].map((q) => (
-            <button
-              key={q}
-              onClick={() => setQuality(q)}
-              className={`px-3 py-1 rounded ${
-                quality === q ? "bg-red-600" : "bg-zinc-800"
-              }`}
-            >
-              {q === "auto" ? "Auto" : `${q}p`}
-            </button>
-          ))}
+        {/* Video Player */}
+        <div className="card overflow-hidden">
+          <VideoPlayer src={video.videoUrl} quality={quality} />
         </div>
 
-        {/* 🎉 Party */}
-        
+        {/* Video Info */}
+        <div className="flex flex-col md:flex-row gap-6 justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              {video.isPremium && (
+                <span className="badge badge-premium">⭐ Premium</span>
+              )}
+            </div>
+            <h1 className="text-3xl font-bold mb-2">{video.title}</h1>
+            <p className="text-gray-400 leading-relaxed">{video.description}</p>
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-col gap-3">
+            <div className="card p-4">
+              <p className="text-sm text-gray-400 mb-3">Quality</p>
+              <div className="flex gap-2">
+                {["auto", 240, 480].map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => setQuality(q)}
+                    className={`btn text-sm px-4 py-2 ${
+                      quality === q ? "btn-primary" : "btn-secondary"
+                    }`}
+                  >
+                    {q === "auto" ? "Auto" : `${q}p`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* <a href="/party" className="btn btn-secondary">
+              🎉 Start Watch Party
+            </a> */}
+          </div>
+        </div>
       </div>
     </div>
   );
