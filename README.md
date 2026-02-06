@@ -164,7 +164,7 @@ These constraints were chosen to:
 
 ## 🧑‍💻 Author
 
-Built with ❤️ by **Akshat Jaiswal**
+Built  by **Akshat Jaiswal**
 
 If you’re exploring real-time systems, WebRTC, or Next.js architecture — feel free to fork, experiment, and improve!
 

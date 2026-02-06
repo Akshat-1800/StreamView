@@ -7,6 +7,7 @@ import RemoteVideoTile from "@/components/remoteVideoTile";
 import { getSocket } from "@/lib/socketClient";
 import { createPeerConnection } from "@/lib/webRTC";
 import {useRouter} from "next/navigation"
+import { toast } from "react-toastify";
 
 export default function PartyPage() {
   const { roomId } = useParams();
@@ -31,14 +32,14 @@ export default function PartyPage() {
      ====================== */
   useEffect(() => {
     socket.emit("join-room", { roomId });
-
+    
     socket.on("room-state", setRoomState);
     socket.on("presenter-changed", ({ presenterId }) =>
       setPresenterId(presenterId)
     );
 
     socket.on("screen-share-denied", () =>
-      alert("Someone is already presenting")
+      toast.error("Someone is already presenting")
     );
 
     socket.on("user-left", ({ socketId }) => {
@@ -81,11 +82,11 @@ export default function PartyPage() {
       if (!active) return;
 
       if (err && err.name === "NotAllowedError") {
-        alert("Permissions denied. Please allow camera and microphone access.");
+        toast.error("Permissions denied. Please allow camera and microphone access.");
       } else if (err && err.name === "NotFoundError") {
-        alert("No camera or microphone found.");
+        toast.error("No camera or microphone found.");
       } else {
-        alert("Failed to access camera/microphone.");
+        toast.error("Failed to access camera/microphone.");
       }
 
       setLocalStream(null);
@@ -174,6 +175,7 @@ export default function PartyPage() {
 const startScreenShare = async () => {
   try {
     socket.emit("start-screen-share");
+    toast.info("You have started presenting");
 
     const screenStream = await navigator.mediaDevices.getDisplayMedia({
       video: true,
@@ -216,6 +218,7 @@ const startScreenShare = async () => {
 
  const stopScreenShare = () => {
   socket.emit("stop-screen-share");
+  toast.info("You have stopped presenting");
 
   const cameraTrack = cameraTrackRef.current;
   if (!cameraTrack) return;
@@ -241,6 +244,7 @@ const startScreenShare = async () => {
 
 
   const leaveRoom = () => {
+    toast.info("Leaving the party...");
   // 1️⃣ Close all peer connections
   Object.values(peersRef.current).forEach((pc) => pc.close());
   peersRef.current = {};

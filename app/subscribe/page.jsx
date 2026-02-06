@@ -2,6 +2,7 @@
 
 
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 
 export default function SubscribePage() {
@@ -16,44 +17,49 @@ export default function SubscribePage() {
     });
 
   const handleSubscribe = async () => {
-    await loadRazorpay();
-
-    // 1️⃣ Create order
-    const res = await fetch("/api/payment/create-order", {
-      method: "POST",
-    });
-
-    const order = await res.json();
-
-    // 2️⃣ Open Razorpay
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      name: "StreamView Premium",
-      description: "Monthly Subscription",
-      order_id: order.id,
-
-      handler: async function (response) {
-        // 3️⃣ Verify payment
-        const verifyRes = await fetch("/api/payment/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(response),
-        });
-
-        if (verifyRes.ok) {
-          router.push("/dashboard");
-        } else {
-          alert("Payment verification failed");
-        }
-      },
-    };
-
-    const rzp = new window.Razorpay(options);
-    rzp.open();
-  };
-
+    try {
+      await loadRazorpay();
+  
+      // 1️⃣ Create order
+      const res = await fetch("/api/payment/create-order", {
+        method: "POST",
+      });
+  
+      const order = await res.json();
+  
+      // 2️⃣ Open Razorpay
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "StreamView Premium",
+        description: "Monthly Subscription",
+        order_id: order.id,
+  
+        handler: async function (response) {
+          // 3️⃣ Verify payment
+          const verifyRes = await fetch("/api/payment/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response),
+          });
+  
+          if (verifyRes.ok) {
+            toast.success("Payment successful! Premium activated.");
+            router.push("/dashboard");
+          } else {
+            toast.error("Payment verification failed");
+          }
+        },
+      };
+  
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    }
+  
+     catch (error) {
+      toast.error("An error occurred during the payment process.");
+    }};
   return (
     <div className="min-h-screen flex items-center justify-center gradient-mesh p-6">
       <div className="max-w-lg w-full animate-fade-in">

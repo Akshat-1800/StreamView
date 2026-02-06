@@ -3,6 +3,7 @@ import React from 'react'
 import { getSocket } from '@/lib/socketClient';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 
 const Party = () => {
@@ -21,12 +22,15 @@ const Party = () => {
   }, [router, socket]);
   
   const joinParty = () => {
-    if(!roomId) return;
+    if(!roomId) {
+      toast.error("Please enter a valid Room ID");
+      return;}
     router.push(`/party/${roomId.trim()}`);
   }
   
   const createParty = () => {
     socket.emit("create-room");
+    toast.info("Creating room...");
   };
   
   return (

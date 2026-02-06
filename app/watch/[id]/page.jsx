@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import VideoPlayer from "@/components/VideoPlayer";
 // import { getSocket } from "@/lib/socketClient";
+import { toast } from "react-toastify";
 
 export default function WatchPage() {
   const { id } = useParams();
@@ -28,7 +29,10 @@ export default function WatchPage() {
         return res.json();
       })
       .then(setVideo)
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        setError(err.message);
+        toast.error(err.message);
+      });
   }, [id]);
 
   /* ======================
