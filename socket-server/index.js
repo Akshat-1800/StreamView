@@ -157,6 +157,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(8080, () => {
-  console.log("🚀 Socket server running on http://localhost:8080");
+server.listen(3001, () => {
+  console.log("🚀 Socket server running on http://localhost:3001");
 });
