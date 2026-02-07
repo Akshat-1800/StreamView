@@ -29,8 +29,8 @@ export default function SearchBar() {
   }, [debouncedQuery]);
 
   return (
-    <div className="relative w-80">
-      <div className={`relative transition-all duration-300 ${focused ? 'scale-105' : ''}`}>
+    <div className="relative w-full md:w-80">
+      <div className={`relative transition-all duration-300 ${focused ? 'md:scale-105' : ''}`}>
         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
           🔍
         </span>

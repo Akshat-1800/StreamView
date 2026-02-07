@@ -300,24 +300,24 @@ const startScreenShare = async () => {
     <div className="party-container">
       {/* HEADER */}
       <header className="party-header">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold flex items-center gap-2">
-              <span className="text-2xl">🎉</span>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+            <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
+              <span className="text-xl md:text-2xl">🎉</span>
               <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
                 Watch Party
               </span>
             </h1>
-            <div className="h-6 w-px bg-gray-700"></div>
+            <div className="hidden sm:block h-6 w-px bg-gray-700"></div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800/50 rounded-full">
-              <span className="text-sm text-gray-400">Room:</span>
-              <code className="text-sm font-mono text-white">{roomId}</code>
+              <span className="text-xs md:text-sm text-gray-400">Room:</span>
+              <code className="text-xs md:text-sm font-mono text-white truncate max-w-[120px] md:max-w-none">{roomId}</code>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800/50 rounded-full">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              <span className="text-sm text-gray-300">{participantCount} {participantCount === 1 ? 'person' : 'people'}</span>
+              <span className="text-xs md:text-sm text-gray-300">{participantCount} {participantCount === 1 ? 'person' : 'people'}</span>
             </div>
           </div>
         </div>

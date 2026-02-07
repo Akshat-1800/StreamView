@@ -32,18 +32,18 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen gradient-mesh">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
           <div>
-            <h1 className="section-title text-3xl mb-2">Browse</h1>
-            <p className="text-gray-400">Discover movies and series to watch together</p>
+            <h1 className="section-title text-2xl md:text-3xl mb-1 md:mb-2">Browse</h1>
+            <p className="text-gray-400 text-sm md:text-base">Discover movies and series to watch together</p>
           </div>
-          <div className="flex items-center gap-3">
-            <button className="btn btn-secondary text-sm">
+          <div className="flex items-center gap-2 md:gap-3">
+            <button className="btn btn-secondary text-xs md:text-sm px-3 md:px-4">
               🎬 Movies
             </button>
-            <button className="btn btn-ghost text-sm">
+            <button className="btn btn-ghost text-xs md:text-sm px-3 md:px-4">
               📺 Series
             </button>
           </div>
@@ -51,7 +51,7 @@ export default function DashboardPage() {
 
         {/* Loading state */}
         {loading && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {[1,2,3,4,5,6,7,8,9,10].map(i => (
               <div key={i} className="space-y-3 animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
                 <div className="skeleton aspect-video rounded-xl"></div>
@@ -63,7 +63,7 @@ export default function DashboardPage() {
 
         {/* Videos grid */}
         {!loading && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {videos.map((video, index) => (
               <div 
                 key={video._id} 

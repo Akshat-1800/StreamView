@@ -30,12 +30,12 @@ const VideoCard = ({ video }) => {
           </div>
         </div>
 
-        <div className="mt-3 px-1">
-          <h3 className="font-semibold truncate group-hover:text-red-400 transition-colors">
+        <div className="mt-2 md:mt-3 px-1">
+          <h3 className="font-semibold text-sm md:text-base truncate group-hover:text-red-400 transition-colors">
             {video.title}
           </h3>
           {video.description && (
-            <p className="text-sm text-gray-500 truncate mt-1">
+            <p className="text-xs md:text-sm text-gray-500 truncate mt-0.5 md:mt-1">
               {video.description}
             </p>
           )}

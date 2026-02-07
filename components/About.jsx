@@ -25,16 +25,16 @@ const About = () => {
   ]
 
   return (
-    <section id="features" className="py-24 px-6 gradient-mesh">
+    <section id="features" className="py-16 md:py-24 px-4 md:px-6 gradient-mesh">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="section-title text-4xl mb-4">Why Choose StreamView?</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+        <div className="text-center mb-10 md:mb-16 animate-fade-in">
+          <h2 className="section-title text-3xl md:text-4xl mb-3 md:mb-4">Why Choose StreamView?</h2>
+          <p className="text-gray-400 max-w-2xl mx-auto text-base md:text-lg px-2">
             The ultimate platform for shared viewing experiences with friends and family.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {features.map((feature, index) => (
             <div 
               key={index}

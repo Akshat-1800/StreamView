@@ -496,4 +496,67 @@ body {
   .presenter-view {
     max-width: 100%;
   }
+  
+  .party-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .party-controls {
+    padding: 0.75rem 1rem;
+  }
+  
+  .control-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+  }
+  
+  .control-bar {
+    gap: 0.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .btn-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .party-sidebar > * {
+    width: 120px;
+  }
+  
+  .control-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 0.875rem;
+  }
+  
+  .party-main {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+  
+  .video-tile-label {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    bottom: 8px;
+    left: 8px;
+  }
+  
+  .video-tile-presenter {
+    padding: 4px 8px;
+    font-size: 0.625rem;
+    top: 8px;
+    left: 8px;
+  }
 }

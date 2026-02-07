@@ -216,10 +216,10 @@ const hideTimeoutRef = useRef(null);
         />
 
         {/* Skip Buttons */}
-        <div className={`absolute inset-0 flex justify-between items-center px-4 pointer-events-none transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`absolute inset-0 flex justify-between items-center px-2 md:px-4 pointer-events-none transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
           <button
             onClick={skipBackward}
-            className="pointer-events-auto bg-black/40 hover:bg-black/60 text-white px-4 py-2 rounded-full backdrop-blur-sm"
+            className="pointer-events-auto bg-black/40 hover:bg-black/60 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-full backdrop-blur-sm text-sm md:text-base"
           >
             ⏪ 
           </button>
@@ -227,7 +227,7 @@ const hideTimeoutRef = useRef(null);
           <button
             onClick={skipForward}
 
-            className="pointer-events-auto bg-black/40 hover:bg-black/60 text-white px-4 py-2 rounded-full backdrop-blur-sm"
+            className="pointer-events-auto bg-black/40 hover:bg-black/60 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-full backdrop-blur-sm text-sm md:text-base"
           >
              ⏩
           </button>

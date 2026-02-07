@@ -61,30 +61,38 @@ export default function SubscribePage() {
       toast.error("An error occurred during the payment process.");
     }};
   return (
-    <div className="min-h-screen flex items-center justify-center gradient-mesh p-6">
+    <div className="min-h-screen flex items-center justify-center gradient-mesh p-4 md:p-6">
       <div className="max-w-lg w-full animate-fade-in">
+        {/* Back button */}
+        <button 
+          onClick={() => router.back()}
+          className="btn btn-ghost text-sm px-0 mb-4 hover:bg-transparent hover:text-red-400"
+        >
+          ← Back
+        </button>
+        
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full glass-light">
+        <div className="text-center mb-6 md:mb-8">
+          <div className="inline-flex items-center gap-2 px-3 md:px-4 py-2 mb-3 md:mb-4 rounded-full glass-light">
             <span>⭐</span>
-            <span className="text-sm">Premium Membership</span>
+            <span className="text-xs md:text-sm">Premium Membership</span>
           </div>
-          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 md:mb-3 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
             Unlock Premium
           </h1>
-          <p className="text-gray-400">
+          <p className="text-gray-400 text-sm md:text-base">
             Get access to all features and exclusive content
           </p>
         </div>
 
         {/* Pricing Card */}
-        <div className="card card-premium p-8 text-center">
-          <div className="mb-6">
-            <span className="text-5xl font-bold">₹199</span>
+        <div className="card card-premium p-6 md:p-8 text-center">
+          <div className="mb-4 md:mb-6">
+            <span className="text-4xl md:text-5xl font-bold">₹199</span>
             <span className="text-gray-400">/month</span>
           </div>
 
-          <ul className="space-y-4 mb-8 text-left">
+          <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 text-left text-sm md:text-base">
             <li className="flex items-center gap-3">
               <span className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 text-sm">✓</span>
               <span>Access all premium movies & series</span>
