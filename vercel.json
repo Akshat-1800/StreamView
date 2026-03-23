@@ -1,0 +1,6 @@
+{
+  "crons": [{
+    "path": "/api/cron/downgrade",
+    "schedule": "* * * * *"
+  }]
+}
