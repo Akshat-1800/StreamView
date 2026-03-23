@@ -4,7 +4,7 @@ import dbconnect from "@/lib/db";
 import { User } from "@/models/User";
 
 export async function POST(req) {
-  const payload = await req.text(); // ✅ IMPORTANT
+  const payload = await req.text();
 
   const headerList = headers();
 
@@ -12,7 +12,6 @@ export async function POST(req) {
   const svix_timestamp = headerList.get("svix-timestamp");
   const svix_signature = headerList.get("svix-signature");
 
-  // ✅ validate headers
   if (!svix_id || !svix_timestamp || !svix_signature) {
     return new Response("Missing svix headers", { status: 400 });
   }
@@ -36,16 +35,32 @@ export async function POST(req) {
 
   const user = event.data;
 
+  // ✅ SAFE EMAIL EXTRACTION
+  const email =
+    user.email_addresses?.find(
+      (e) => e.id === user.primary_email_address_id
+    )?.email_address || null;
+
   /* ======================
-     USER CREATED
+     USER CREATED / UPSERT
   ====================== */
   if (event.type === "user.created") {
-    await User.create({
-      clerkUserId: user.id,
-      name: `${user.first_name || ""} ${user.last_name || ""}`.trim(),
-      avatarUrl: user.image_url,
-      plan: "FREE",
-    });
+    try {
+      await User.findOneAndUpdate(
+        { clerkUserId: user.id },
+        {
+          clerkUserId: user.id,
+          name: `${user.first_name || ""} ${user.last_name || ""}`.trim(),
+          avatarUrl: user.image_url,
+          email,
+          plan: "FREE",
+        },
+        { upsert: true, new: true }
+      );
+    } catch (error) {
+      console.error("Error creating user:", error);
+      return new Response("DB Error", { status: 500 });
+    }
   }
 
   /* ======================
@@ -57,6 +72,7 @@ export async function POST(req) {
       {
         name: `${user.first_name || ""} ${user.last_name || ""}`.trim(),
         avatarUrl: user.image_url,
+        email,
       }
     );
   }

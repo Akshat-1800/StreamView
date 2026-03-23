@@ -10,6 +10,10 @@ const userSchema = new Schema(
     },
     name: String,
     avatarUrl: String,
+    email: {
+      type: String,
+      default:null,
+    },
     plan: {
       type: String,
       enum: ["FREE", "PREMIUM"],
