@@ -42,7 +42,7 @@ const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
-  "/api/webhook/clerk",
+  "/api/webhook/clerk(.*)",
   "/api/cron(.*)",
   // "/api/videos(.*)",
 ]);
@@ -60,6 +60,10 @@ export default clerkMiddleware(async (auth, request) => {
   //     new URL("/sign-in", request.url)
   //   );
   // }
+  const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/api/webhook/clerk") ) {
+    return NextResponse.next();
+  }
   if(!isPublicRoute(request))await auth.protect()
 
   return NextResponse.next();
